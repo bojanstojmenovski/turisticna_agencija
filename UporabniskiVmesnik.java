@@ -10,6 +10,7 @@ public class UporabniskiVmesnik {
 		// Vnos uporanikov iz datoteke
 		ta.readFromFile("users.txt");
 		ta.readFromFile("pocitnice.txt");
+		ta.readFromFile("rezervacije.txt");
 		
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader br = new BufferedReader(isr);
@@ -20,7 +21,7 @@ public class UporabniskiVmesnik {
 		
 		while(!ta.isUserLoggedIn()) {
 			System.out.println("Pritisni (L) za logiranje v program.");
-			System.out.println("Če še nimaš račun, pritisni (R) za registriranje v program.");
+			System.out.println("Ce se nimas racun, pritisni (R) za registriranje v program.");
 			System.out.println("Pritisni (Q) za prekinitev programa.");
 			System.out.println();
 			

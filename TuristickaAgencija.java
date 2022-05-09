@@ -6,19 +6,22 @@ public class TuristickaAgencija {
     private Uporabnik loggedUser;
     private ArrayList<Uporabnik> seznamUporabnikov;
     private ArrayList<Pocitnice> seznamPocitnice;
+    private ArrayList<Rezervacija> seznamRezervacije;
+    private ArrayList<Termin> vsiTermini;
 
     public TuristickaAgencija() {
         this.loggedUser = null;
         this.seznamUporabnikov = new ArrayList<Uporabnik>();
         this.seznamPocitnice = new ArrayList<Pocitnice>();
+        this.seznamRezervacije = new ArrayList<Rezervacija>();
     }
 
     public TuristickaAgencija(Uporabnik loggedUser, ArrayList<Uporabnik> seznamUporabnikov,
-                            ArrayList<Pocitnice> seznamPocitnice) {
-
+                            ArrayList<Pocitnice> seznamPocitnice, ArrayList<Rezervacija> seznamRezervacije) {
         this.loggedUser = loggedUser;
         this.seznamUporabnikov = seznamUporabnikov;
         this.seznamPocitnice = seznamPocitnice;
+        this.seznamRezervacije = seznamRezervacije;
     }
 
     public Uporabnik getLoggedUser() {
@@ -47,6 +50,22 @@ public class TuristickaAgencija {
 
     public void setSeznamPocitnice(ArrayList<Pocitnice> seznamPocitnice) {
         this.seznamPocitnice = seznamPocitnice;
+    }
+
+    public ArrayList<Rezervacija> getSeznamRezervacije() {
+        return this.seznamRezervacije;
+    }
+
+    public void setSeznamRezervacije(ArrayList<Rezervacija> seznamRezervacije) {
+        this.seznamRezervacije = seznamRezervacije;
+    }
+
+    public ArrayList<Termin> getVsiTermini() {
+        return this.vsiTermini;
+    }
+
+    public void setVsiTermini(ArrayList<Termin> vsiTermini) {
+        this.vsiTermini = vsiTermini;
     }
 
     // Logiranje uporabnika u program
@@ -78,7 +97,18 @@ public class TuristickaAgencija {
         }
     }
 
-    // Preverjanje ce uprabnik s tem imenom ze ne obstaja, potem ga doda v
+    public void saveUserInFile(String fileName) throws IOException {
+        FileWriter fw = new FileWriter(fileName, false);
+		PrintWriter file = new PrintWriter(fw);
+
+        for (Uporabnik u : this.seznamUporabnikov) {
+            file.print(u.compressAsString());
+        }
+
+        file.close();
+    }
+
+    // Preverjanje ce uprabnik s tem imenom ne obstaja, potem ga doda v users.txt fajl
     public void registrirajUporabnik(Uporabnik user) {
         boolean helper = false;
 		
@@ -103,15 +133,49 @@ public class TuristickaAgencija {
 		}
     }
 
-    public void saveUserInFile(String fileName) throws IOException {
+    public void saveReservationInFile(String fileName) throws IOException {
         FileWriter fw = new FileWriter(fileName, false);
 		PrintWriter file = new PrintWriter(fw);
 
-        for (Uporabnik u : this.seznamUporabnikov) {
-            file.print(u.compressAsString());
+        for (Rezervacija r : this.seznamRezervacije) {
+            file.print(r.compressAsString());
         }
 
         file.close();
+    }
+
+    public void rezervirajTermin(Rezervacija r) {
+        for (Pocitnice p : this.seznamPocitnice) {
+            for (Termin t : p.getSeznamTerminov()) {
+                if (t.getId() == r.getTerminId()) {
+                    int rSteviloOseb = r.getSteviloOdraslih() + r.getSteviloOtrok();
+                    int terminProsto = p.getMaxSteviloOseb() - t.getSteviloOsebRezervirano();
+                    if (rSteviloOseb <= terminProsto) {
+                        t.setSteviloOsebRezervirano(t.getSteviloOsebRezervirano() + rSteviloOseb);
+                        this.getLoggedUser().dodajRezervacija(r);
+                        this.seznamRezervacije.add(r);
+                        try {
+                            this.saveReservationInFile("rezervacije.txt");
+                            System.out.println("\r\nUspesno ste rezervirali termin, hvala na zaupanje.\r\n");
+                            System.out.println(t.compressToString(p, t.getId()));
+                        } catch (Exception e) {
+                            System.out.println("Can't save user in file. File does not exist!");
+                        }
+                    } else {
+                        System.out.println("\r\nNi dovolnjno prostih mest za ta termin.\r\n");
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public void obnoviTermin(Termin obnovenTermin, ArrayList<Termin> seznamTerminov) {
+        for (Termin t : seznamTerminov) {
+            if (t.getId() == obnovenTermin.getId()) {
+                t.setSteviloOsebRezervirano(obnovenTermin.getSteviloOsebRezervirano());
+            }
+        }
     }
 
     public void readFromFile(String fileName) throws Exception {
@@ -132,7 +196,15 @@ public class TuristickaAgencija {
 				}
 				Uporabnik newUser = Uporabnik.readFromArray(data);
 				this.seznamUporabnikov.add(newUser);
-			} else if (row.equals("*P")) {
+			} else if (row.equals("*R")) {
+                data = new ArrayList<String>();
+                while (file.ready() && !row.equals("##")) {
+                    row = file.readLine().trim();
+					data.add(row);
+                }
+                Rezervacija rezervacija = Rezervacija.readFromArray(data);
+                this.seznamRezervacije.add(rezervacija);
+            } else if (row.equals("*P")) {
                 data = new ArrayList<String>();
                 while (file.ready() && !row.equals("##")) {
                     row = file.readLine().trim();

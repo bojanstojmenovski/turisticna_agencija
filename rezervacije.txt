@@ -1,0 +1,16 @@
+*R
+Bojan
+Stojmenovski
+bs
+10
+5
+12
+##
+*R
+Bojan
+Stojmenovski
+bs
+30
+5
+11
+##

@@ -15,12 +15,14 @@ public class UporabnikVmesnik {
                 System.out.println("Pritisni (U) za pogled vsi uporabniki.");
             }
             System.out.println("Pritisnite (P) za pogled vse pocitnice.");
+            System.out.println("Pritisnite (B) za rezervacija termina.");
+            System.out.println("Pritisnite (O) za ogled svoje rezervacije.");
             System.out.println("Pritisnite (1) za iskanje pocitnice po casovnem okvirju.");
             System.out.println("Pritisnite (2) za iskanje pocitnice po drzavi.");
             System.out.println("Pritisnite (3) za iskanje pocitnice po cenovnem okvirju.");
             System.out.println("Pritisnite (4) za iskanje pocitnice po tipu.");
             System.out.println("Pritisnite (E) za odjava iz programa.");
-            System.out.println("Pritisni (Q) za prekinitev programa.");
+            System.out.println("Pritisnite (Q) za prekinitev programa.");
 
             izbira = br.readLine().trim().toLowerCase().charAt(0);
 
@@ -35,6 +37,19 @@ public class UporabnikVmesnik {
 
                 case 'p':
                     ta.prikaziVsePocitnice();
+                    break;
+
+                case 'b':
+                    Rezervacija rezervacija = Rezervacija.kreirajRezervacije(ta.getLoggedUser());
+                    ta.rezervirajTermin(rezervacija);
+                    break;
+
+                case 'o':
+                    for (Rezervacija r : ta.getSeznamRezervacije()) {
+                        if (r.getUporabnikUsername().equals(ta.getLoggedUser().getUporabniskoIme())) {
+                            System.out.println(r.toString());
+                        }
+                    }
                     break;
 
                 case '1':

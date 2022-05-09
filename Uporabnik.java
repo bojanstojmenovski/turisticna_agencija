@@ -15,14 +15,16 @@ public class Uporabnik {
         this.uporabniskoIme = "";
         this.geslo = "";
         this.jeAdmin = false;
+        this.rezervacije = new ArrayList<Rezervacija>();
     }
 
-    public Uporabnik(String ime, String priimek, String uporabniskoIme, String geslo, boolean jeAdmin) {
+    public Uporabnik(String ime, String priimek, String uporabniskoIme, String geslo, boolean jeAdmin, ArrayList<Rezervacija> rezervacije) {
         this.ime = ime;
         this.priimek = priimek;
         this.uporabniskoIme = uporabniskoIme;
         this.geslo = geslo;
         this.jeAdmin = jeAdmin;
+        this.rezervacije = rezervacije;
     }
 
     public String getIme() {
@@ -73,6 +75,10 @@ public class Uporabnik {
         this.rezervacije = rezervacije;
     }
 
+    public void dodajRezervacija(Rezervacija r) {
+        this.rezervacije.add(r);
+    }
+
     // Saving User data in one string
     @Override
     public String toString() {
@@ -120,7 +126,7 @@ public class Uporabnik {
         String geslo = br.readLine().trim();
         System.out.println();
 
-        Uporabnik user = new Uporabnik(ime, priimek, uporabniskoIme, geslo, false);
+        Uporabnik user = new Uporabnik(ime, priimek, uporabniskoIme, geslo, false, new ArrayList<Rezervacija>());
 
         return user;
     }

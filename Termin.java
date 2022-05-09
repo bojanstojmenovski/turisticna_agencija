@@ -3,6 +3,7 @@ import java.time.*;
 import java.time.format.*;
 
 public class Termin {
+    private int id;
     private int steviloOsebRezervirano;
     private LocalDate datumPrihod;
     private LocalDate datumOdhod;
@@ -13,6 +14,7 @@ public class Termin {
     static DateTimeFormatter dateFormatter = new DateTimeFormatterBuilder().appendPattern("dd-MM-yyyy").toFormatter();
 
     public Termin() {
+        this.id = (int)Math.floor(Math.random()*(999-100+1)+100); // Generate a random number between 100 and 999
         this.steviloOsebRezervirano = 0;
         this.datumPrihod = LocalDate.parse("01-01-2023", dateFormatter);
         this.datumOdhod = LocalDate.parse("01-01-2023", dateFormatter);
@@ -20,12 +22,21 @@ public class Termin {
         this.casOdhod = 0;
     }
 
-    public Termin(int steviloOsebRezervirano, LocalDate datumPrihod, LocalDate datumOdhod, int casPrihod, int casOdhod) {
+    public Termin(int id, int steviloOsebRezervirano, LocalDate datumPrihod, LocalDate datumOdhod, int casPrihod, int casOdhod) {
+        this.id = id;
         this.steviloOsebRezervirano = steviloOsebRezervirano;
         this.datumPrihod = datumPrihod;
         this.datumOdhod = datumOdhod;
         this.casPrihod = casPrihod;
         this.casOdhod = casOdhod;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getSteviloOsebRezervirano() {
@@ -87,6 +98,7 @@ public class Termin {
     public String compressToString(Pocitnice p, int i) {
         String termin = "";
         termin += "\r\n  === Termin " + i + " ===\r\n";
+        termin += "  Sifra: " + this.getId() + "\r\n";
         termin += "  Datum prihoda: " + Termin.getStringFromDate(this.getDatumPrihod()) + "\r\n";
         termin += "  Cas prihoda: " + this.getCasPrihod() + "\r\n";
         termin += "  Datum odhoda: " + Termin.getStringFromDate(this.getDatumOdhod()) + "\r\n";
@@ -110,12 +122,13 @@ public class Termin {
     public static Termin readFromArray(ArrayList<String> array) {
         Termin termin = new Termin();
         try {
-            termin.setSteviloOsebRezervirano(Integer.parseInt(array.get(0)));
-            termin.setDatumPrihod(Termin.getDateFromString(array.get(1)));
-            termin.setDatumOdhod(Termin.getDateFromString(array.get(2)));
-            termin.setCasPrihod(Integer.parseInt(array.get(3)));
-            termin.setCasOdhod(Integer.parseInt(array.get(4)));
-            termin.setJeRezervirano((array.get(5).equals("true") ? true : false));
+            termin.setId(Integer.parseInt(array.get(0)));
+            termin.setSteviloOsebRezervirano(Integer.parseInt(array.get(1)));
+            termin.setDatumPrihod(Termin.getDateFromString(array.get(2)));
+            termin.setDatumOdhod(Termin.getDateFromString(array.get(3)));
+            termin.setCasPrihod(Integer.parseInt(array.get(4)));
+            termin.setCasOdhod(Integer.parseInt(array.get(5)));
+            termin.setJeRezervirano((array.get(6).equals("true") ? true : false));
             return termin;
         } catch (Exception e) {
             System.out.println("\r\nPrišlo je do napake v zapisu termina!\r\n");
