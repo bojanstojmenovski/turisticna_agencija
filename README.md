@@ -5,7 +5,7 @@
 ## Setup
 - `git clone` this repository
 - `javac *.java`
-- `jar cvfm TuristicnaAgencija.jar manifest.txt *.class`
+- `jar cmf manifest.txt TuristicnaAgencija.jar *.class`
 - `java -jar TuristicnaAgencija.jar`
 
 ## Intructions
